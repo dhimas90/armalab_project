@@ -97,10 +97,12 @@ class Car(models.Model):
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
         return self.police_number
+
     def delete(self, *args, **kwargs):
         self.car_image.delete()
         self.image_vehicle_number.delete()
         super().delete(*args, **kwargs)
+
 
 class Trip(models.Model):
     letter_number = models.CharField(max_length=50)

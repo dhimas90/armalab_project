@@ -8,6 +8,7 @@ from django.contrib import messages
 from .forms import CarForm, CategoryForm, TransmissionForm, PositionForm,BrandForm, DivisionForm, GenderForm, DriverForm
 from django.core.paginator import Paginator
 from .serializer import CarSerializer
+from django.http import JsonResponse
 #Car CRUD
 def CarIndex(requests):
     if requests.method == 'GET':
@@ -18,9 +19,9 @@ def CarIndex(requests):
         page = page.get_page(page_list)
         return render(requests, template, {'page' : page})
 def Restcar(requests):
-    CarSerializer
-    
-    return HttpResponse(data)
+    car = Car.objects.all()
+    serializer = CarSerializer(car, many=True)
+    return JsonResponse(serializer.data, safe=False)
 def CarAdd(requests):
     #prepare template
     form = CarForm

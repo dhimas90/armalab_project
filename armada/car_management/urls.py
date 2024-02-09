@@ -53,6 +53,8 @@ urlpatterns = [
     path("driveredit/<int:id>", views.DriverEdit, name='driveredit'),
     path("driverdetail/<int:id>", views.DriverDetail, name='driverdetail'),
     path("driverdelete/<int:id>", views.DriverDelete, name='driverdelete'),
+
+    path('serialcar/', views.Restcar, name="carrestdata")
 ]
 
 
