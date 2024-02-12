@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'car_management',
     'bootstrap5',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
