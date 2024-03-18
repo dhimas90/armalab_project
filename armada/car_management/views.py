@@ -5,10 +5,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Car, Driver, Gender, Person_in_charge, Category, Transmission, Position, Trip, Brand, Division, Maintenance, List_Maintenance
 from django.http import HttpResponse, Http404
 from django.contrib import messages
-from .forms import CarForm, CategoryForm, TransmissionForm, PositionForm,BrandForm, DivisionForm, GenderForm, DriverForm
+from .forms import CarForm, CategoryForm, TransmissionForm, PositionForm,BrandForm, DivisionForm, GenderForm, DriverForm, PersoninChargeForms, MaintenanceForm
 from django.core.paginator import Paginator
-from .serializer import CarSerializer
+from .serializer import CarSerializer, CategorySerializer, TransmissionSerializer, BrandSerializer
 from django.http import JsonResponse
+
+def Restcar(requests):
+    car = Car.objects.all()
+    serializer = CarSerializer(car, many=True)
+    return JsonResponse({'car': serializer.data}, safe=False)
+
 #Car CRUD
 def CarIndex(requests):
     if requests.method == 'GET':
@@ -18,10 +24,8 @@ def CarIndex(requests):
         page_list = requests.GET.get('page')
         page = page.get_page(page_list)
         return render(requests, template, {'page' : page})
-def Restcar(requests):
-    car = Car.objects.all()
-    serializer = CarSerializer(car, many=True)
-    return JsonResponse(serializer.data, safe=False)
+
+    # return JsonResponse(serializer.data)
 def CarAdd(requests):
     #prepare template
     form = CarForm
@@ -75,6 +79,10 @@ def CarDelete(requests, id):
         return redirect('carindex')
 
 #Category CRUD
+def CategoryRest(requests):
+    category = Category.objects.all()
+    serializer = CategorySerializer(category, many=True)
+    return JsonResponse({'category' : serializer.data})
 def CategoryIndex(requests):
     template = 'category/index.html'
     data = Category.objects.values(
@@ -128,6 +136,11 @@ def CategoryDelete(requests, id):
     return redirect('categoryindex')
 
 #Transmission CRUD
+def TransmissionRest(request):
+    transmission = Transmission.objects.all()
+    serializer = TransmissionSerializer(transmission, many=True)
+    return JsonResponse({'transmssion':serializer.data}, safe=False)
+
 def TransmissionIndex(request):
     template = "transmission/index.html"
     data = Transmission.objects.values('id','transmission')
@@ -178,6 +191,7 @@ def Transmissiondelete(requests, id):
     return redirect('transmissionindex')
 
 #Position CRUD
+
 def PositionIndex(requests):
     template = "position/index.html"
     data = Position.objects.values('id', 'code', 'position', 'created_at', 'updated_at')
@@ -229,9 +243,76 @@ def PositionDelete(requests, id):
 
 
 #Person_in_charge CRUD
+def PersonIndex(requests):
+    if requests.method == 'GET':
+        data = Person_in_charge.objects.all()
+
+        # data = Person_in_charge.objects.values(
+        #     'id',
+        #     'name',
+        #     'birth',
+        #     'identity_number',
+        #     'image_identity_number',
+        #     'created_at',
+        #     'updated_at',
+        #     'division_id__division',
+        #     'gender_id__gender',
+        #     'position_id__position',
+        # )
+        template = 'person/index.html'
+        if data :
+            context = {'person' : data}
+            return render(requests, template, context)
+        else:
+            return render(requests, template, {'messages' : "data doesn't exist"})
+
+def PersonAdd(requests):
+    form = PersoninChargeForms
+    template = 'person/add.html'
+    context = {}
+    if requests.method == 'POST':
+        form = PersoninChargeForms(requests.POST, requests.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(requests, "Success addedd Person In Charge")
+            return redirect('personindex')
+    context['form'] = form
+    return render(requests, template, context)
+
+def PersonEdit(requests, id):
+    person = get_object_or_404(Person_in_charge, id = id)
+    template = 'person/edit.html'
+    if requests.method == 'POST':
+        form = DriverForm(requests.POST,requests.FILES, instance=person)
+        if form.is_valid():
+            form.save()
+            messages.success(requests, "Success edit data driver")
+            return redirect('personindex')
+        else:
+            messages.error(requests, "Data failed to update, please check again")
+            return redirect('personindex')
+    if requests.method == 'GET':
+        context = {'form':PersoninChargeForms(instance=person), 'id':id}
+        return render(requests, template, context)
+
+def PersonDetail(requests, id):
+    person = Person_in_charge.objects.get(pk = id)
+    template = 'person/detail.html'
+    context = {'data'  : person}
+    return render(requests, template, context)
+
+def PersonDelete(requests, id):
+    person = Person_in_charge.objects.get(pk = id)
+    person.delete()
+    messages.success(requests, "Success delete data")
+    return redirect('personindex')
 #Position CRUD
 #Trip CRUD
 #Brand CRUD
+def BrandRest(request):
+    query = Brand.objects.all()
+    brand = BrandSerializer(query, many=True)
+    return JsonResponse({'brand':brand.data})
 def BrandIndex(requests):
     template = 'brand/index.html'
     brand = Brand.objects.values('id','brand', 'created_at','updated_at')
@@ -330,6 +411,38 @@ def DivisionDelete(requests, id):
     return redirect('divisionindex')
 
 #Maintenance CRUD
+
+def MaintenanceIndex(request):
+    if request.method == 'GET':
+        template = 'maintenance/index.html'
+        data = Maintenance.objects.all()
+        page = Paginator(data, 10)
+        page_list = request.GET.get('page')
+        page = page.get_page(page_list)
+        context = {'maintenance' : page}
+        return render(request,template, context)
+
+def MaintenanceAdd(request):
+    template = 'maintenance/add.html'
+    context = {}
+    form = MaintenanceForm
+    if request.method == 'POST':
+        form = MaintenanceForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(requests, "Success adding maintenance data")
+            return redirect('maintenaceindex')
+
+    context['form'] = form
+    return render(request, template, context)
+
+    return render(request, template, context)
+def MaintenanceEdit(request,id):
+    return HttpResponse("edit")
+def MaintenanceDetail(request,id):
+    return HttpResponse("detail")
+def MaintenanceDelete(request,id):
+    return HttpResponse("delete")
 #List_Maintenance CRUD
 #Gender CRUD
 
@@ -430,8 +543,9 @@ def DriverDetail(requests, id):
 
 def DriverDelete(requests, id):
     driver = Driver.objects.get(pk = id)
-    driver.remove()
+    driver.delete()
     messages.success(requests, "Success delete data")
     return redirect('driverindex')
+
 
 # Car, Driver, Gender, Person_in_charge, Category, Transmission, Position, Trip, Brand, Division, Maintenance, List_Maintenance

@@ -54,7 +54,22 @@ urlpatterns = [
     path("driverdetail/<int:id>", views.DriverDetail, name='driverdetail'),
     path("driverdelete/<int:id>", views.DriverDelete, name='driverdelete'),
 
-    path('serialcar/', views.Restcar, name="carrestdata")
+    path("charge/", views.PersonIndex, name='personindex'),
+    path("chargeadd/", views.PersonAdd, name='personadd'),
+    path("chargeedit/<int:id>", views.PersonEdit, name='personedit'),
+    path("chargedetail/<int:id>", views.PersonDetail, name='persondetail'),
+    path("chargedelete/<int:id>", views.PersonDelete, name='persondelete'),
+
+    path("maintenance/", views.MaintenanceIndex, name='maintenanceindex'),
+    path("maintenanceadd/", views.MaintenanceAdd, name='maintenanceadd'),
+    path("maintenanceedit/<int:id>", views.MaintenanceEdit, name='maintenanceedit'),
+    path("maintenancedetail/<int:id>", views.MaintenanceDetail, name='maintenancedetail'),
+    path("maintenancedelete/<int:id>", views.MaintenanceDelete, name='maintenancedelete'),
+
+    path("restcar/", views.Restcar),
+    path("restcategory/", views.CategoryRest),
+    path("resttransmission/", views.TransmissionRest),
+    path("restbrand/", views.BrandRest),
 ]
 
 

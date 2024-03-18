@@ -58,9 +58,24 @@ class DriverForm(ModelForm):
         fields = '__all__'
 
 class PersoninChargeForms(ModelForm):
+    birth = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'autocomplete': 'off'})
+    )
+    # gender = forms.ModelChoiceField(queryset=Gender.objects.all())
+    # position = forms.ModelChoiceField(queryset=Position.objects.all())
+    # division = forms.ModelChoiceField(queryset=Division.objects.all())
     class Meta:
         model = Person_in_charge
-        fields = '__all__'
+        fields = "__all__"
+        #     [
+        #     'name',
+        #     'birth',
+        #     'identity_number',
+        #     'image_identity_number',
+        #     'division',
+        #     'gender',
+        #     'position',
+        # ]
 
 class BrandForm(ModelForm):
     class Meta:
@@ -72,3 +87,7 @@ class GenderForm(ModelForm):
         model = Gender
         fields = '__all__'
 
+class MaintenanceForm(ModelForm):
+    class Meta:
+        model = Maintenance
+        fields = '__all__'
