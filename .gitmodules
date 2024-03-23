@@ -1,0 +1,3 @@
+[submodule "qualitycontrol"]
+	path = qualitycontrol
+	url = https://github.com/dhimas90/armalab_project.git
